@@ -1,6 +1,6 @@
-package edu.calculatordemo.services.impl;
+package CalculatorDemo.services.impl;
 
-import edu.calculatordemo.services.api.Solver;
+import CalculatorDemo.services.api.Solver;
 
 public class SolverImpl implements Solver{
 

@@ -1,4 +1,4 @@
-package edu.calculatordemo.services.api;
+package CalculatorDemo.services.api;
 
 public interface Solver {
 	/**
