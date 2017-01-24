@@ -7,14 +7,18 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 public class ComputationEntry {
 	private int id;
 	private String expression;
 	private String result;
+	@JsonIgnore
 	private UserEntry userEntry;
 
 	public ComputationEntry() {
+
 	}
 
 	public ComputationEntry(String name) {
@@ -72,8 +76,6 @@ public class ComputationEntry {
 		builder.append(expression);
 		builder.append(", result=");
 		builder.append(result);
-		builder.append(", userEntry=");
-		builder.append(userEntry);
 		builder.append("]");
 		return builder.toString();
 	}

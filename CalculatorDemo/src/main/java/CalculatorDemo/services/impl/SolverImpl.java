@@ -6,9 +6,11 @@ import javax.script.ScriptException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 
 import CalculatorDemo.services.api.Solver;
 
+@Service
 public class SolverImpl implements Solver {
 
 	private static final Logger log = LoggerFactory.getLogger(SolverImpl.class);
