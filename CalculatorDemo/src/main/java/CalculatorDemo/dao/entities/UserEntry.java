@@ -10,50 +10,49 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-
 @Entity
 @Table(name = "user_entry")
 public class UserEntry {
-    private int id;
-    private String name;
-    private String password;
-    private Set<ComputationEntry> computations;
+	private long id;
+	private String name;
+	private String password;
+	private Set<ComputationEntry> computations;
 
-    public UserEntry(){
+	public UserEntry() {
 
-    }
+	}
 
-    public UserEntry(String name, String password) {
-        this.name = name;
-        this.password = password;
-    }
+	public UserEntry(String name, String password) {
+		this.name = name;
+		this.password = password;
+	}
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    public int getId() {
-        return id;
-    }
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	public long getId() {
+		return id;
+	}
 
-    public void setId(int id) {
-        this.id = id;
-    }
+	public void setId(long id) {
+		this.id = id;
+	}
 
-    public String getName() {
-        return name;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public void setName(String name) {
-        this.name = name;
-    }
+	public void setName(String name) {
+		this.name = name;
+	}
 
-    @OneToMany(mappedBy = "userEntry", cascade = CascadeType.ALL)
-    public Set<ComputationEntry> getComputations() {
-        return computations;
-    }
+	@OneToMany(mappedBy = "userEntry", cascade = CascadeType.ALL)
+	public Set<ComputationEntry> getComputations() {
+		return computations;
+	}
 
-    public void setComputations(Set<ComputationEntry> computations) {
-        this.computations = computations;
-    }
+	public void setComputations(Set<ComputationEntry> computations) {
+		this.computations = computations;
+	}
 
 	public String getPassword() {
 		return password;
