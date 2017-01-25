@@ -20,6 +20,7 @@ import CalculatorDemo.controllers.exceptions.ComputationNotFoundException;
 import CalculatorDemo.controllers.exceptions.InvalidDataException;
 import CalculatorDemo.controllers.exceptions.UserExistsException;
 import CalculatorDemo.controllers.exceptions.UserNotFoundException;
+import CalculatorDemo.dao.api.ComputationRepository;
 import CalculatorDemo.dao.api.UserDAO;
 import CalculatorDemo.dao.entities.ComputationEntry;
 import CalculatorDemo.dao.entities.UserEntry;
@@ -32,6 +33,9 @@ public class HistoryController {
 
 	@Autowired
 	private UserDAO userDAO;
+
+	@Autowired
+	private ComputationRepository computationRepo;
 
 	@Autowired
 	private AuthenticationService authenticationService;
@@ -89,12 +93,12 @@ public class HistoryController {
 
 	@RequestMapping(value = "/user/{userId}/computations/{computationId}", method = RequestMethod.GET)
 	public ComputationEntry getUserComputationById(@PathVariable long userId, @PathVariable long computationId) {
-		UserEntry user = getUser(userId);	
-		List<ComputationEntry> computations = user.getComputations();
-		if (computations == null || computations.size() < computationId || computationId == 0) {
+		try {
+			ComputationEntry computation = computationRepo.getOne(computationId);
+			return computation;
+		} catch (Exception e) {
 			throw new ComputationNotFoundException();
 		}
-		return computations.get((int) (computationId - 1));
 	}
 
 	@RequestMapping(value = "/user", method = RequestMethod.POST)

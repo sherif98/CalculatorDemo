@@ -13,7 +13,7 @@ import CalculatorDemo.controllers.dto.Computation;
 
 @Entity
 public class ComputationEntry {
-	private int id;
+	private long id;
 	private String expression;
 	private String result;
 	@JsonIgnore
@@ -40,11 +40,11 @@ public class ComputationEntry {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	public int getId() {
+	public long getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(long id) {
 		this.id = id;
 	}
 

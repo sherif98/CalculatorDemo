@@ -10,6 +10,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import CalculatorDemo.dao.api.ComputationRepository;
 import CalculatorDemo.dao.api.UserEntryRepository;
 import CalculatorDemo.dao.entities.ComputationEntry;
 import CalculatorDemo.dao.entities.UserEntry;
@@ -19,12 +20,13 @@ public class CalculatorDemoApplication implements CommandLineRunner {
 
 	@Autowired
 	private UserEntryRepository repo;
-	
+	@Autowired
+	private ComputationRepository comrepo;
+
 	public static void main(String[] args) {
 		SpringApplication.run(CalculatorDemoApplication.class, args);
 	}
-	
-	
+
 	@Override
 	@Transactional
 	public void run(String... strings) throws Exception {
@@ -32,7 +34,11 @@ public class CalculatorDemoApplication implements CommandLineRunner {
 		List<ComputationEntry> computations = new ArrayList<>();
 		computations.add(new ComputationEntry("1 + 1", "2", userEntry));
 		userEntry.setComputations(computations);
-		repo.save(userEntry);
+		UserEntry retrived = repo.save(userEntry);
+		ComputationEntry computationEntry = retrived.getComputations().get(0);
+		ComputationEntry one = comrepo.getOne(computationEntry.getId());
+
+		System.out.println(one);
 	}
-	
+
 }
