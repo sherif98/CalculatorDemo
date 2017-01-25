@@ -4,12 +4,16 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Computation {
+	private int id;
 	private String expression;
 	private String result;
 
-	@Override
-	public String toString() {
-		return "Computation [expression=" + expression + ", result=" + result + "]";
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
 	}
 
 	public String getExpression() {
@@ -26,6 +30,11 @@ public class Computation {
 
 	public void setResult(String result) {
 		this.result = result;
+	}
+
+	@Override
+	public String toString() {
+		return "Computation [id=" + id + ", expression=" + expression + ", result=" + result + "]";
 	}
 
 }

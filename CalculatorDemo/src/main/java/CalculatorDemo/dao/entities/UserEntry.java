@@ -1,6 +1,7 @@
 package CalculatorDemo.dao.entities;
 
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -10,13 +11,15 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import CalculatorDemo.controllers.dto.UserLoginRegisterationInfo;
+
 @Entity
 @Table(name = "user_entry")
 public class UserEntry {
 	private long id;
 	private String name;
 	private String password;
-	private Set<ComputationEntry> computations;
+	private List<ComputationEntry> computations;
 
 	public UserEntry() {
 
@@ -25,6 +28,12 @@ public class UserEntry {
 	public UserEntry(String name, String password) {
 		this.name = name;
 		this.password = password;
+	}
+
+	public UserEntry(UserLoginRegisterationInfo newUser) {
+		this.name = newUser.getName();
+		this.password = newUser.getPassword();
+		computations = new ArrayList<>();
 	}
 
 	@Id
@@ -46,11 +55,11 @@ public class UserEntry {
 	}
 
 	@OneToMany(mappedBy = "userEntry", cascade = CascadeType.ALL)
-	public Set<ComputationEntry> getComputations() {
+	public List<ComputationEntry> getComputations() {
 		return computations;
 	}
 
-	public void setComputations(Set<ComputationEntry> computations) {
+	public void setComputations(List<ComputationEntry> computations) {
 		this.computations = computations;
 	}
 

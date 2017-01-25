@@ -9,6 +9,8 @@ import javax.persistence.ManyToOne;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import CalculatorDemo.controllers.dto.Computation;
+
 @Entity
 public class ComputationEntry {
 	private int id;
@@ -27,6 +29,12 @@ public class ComputationEntry {
 	public ComputationEntry(String expression, String result, UserEntry userEntry) {
 		this.expression = expression;
 		this.result = result;
+		this.userEntry = userEntry;
+	}
+
+	public ComputationEntry(Computation computation, UserEntry userEntry) {
+		this.expression = computation.getExpression();
+		this.result = computation.getResult();
 		this.userEntry = userEntry;
 	}
 

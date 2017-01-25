@@ -1,7 +1,7 @@
 package CalculatorDemo;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.transaction.Transactional;
 
@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.ComponentScan;
 
 import CalculatorDemo.dao.api.UserEntryRepository;
 import CalculatorDemo.dao.entities.ComputationEntry;
@@ -30,7 +29,7 @@ public class CalculatorDemoApplication implements CommandLineRunner {
 	@Transactional
 	public void run(String... strings) throws Exception {
 		UserEntry userEntry = new UserEntry("Tarek", "hello");
-		Set<ComputationEntry> computations = new HashSet<>();
+		List<ComputationEntry> computations = new ArrayList<>();
 		computations.add(new ComputationEntry("1 + 1", "2", userEntry));
 		userEntry.setComputations(computations);
 		repo.save(userEntry);

@@ -6,13 +6,17 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class User {
+	private long id;
 	private String name;
 	private String password;
 	private Set<Computation> computations;
 
-	@Override
-	public String toString() {
-		return "User [name=" + name + ", password=" + password + ", computations=" + computations + "]";
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
 	}
 
 	public String getName() {
@@ -37,6 +41,11 @@ public class User {
 
 	public void setComputations(Set<Computation> computations) {
 		this.computations = computations;
+	}
+
+	@Override
+	public String toString() {
+		return "User [id=" + id + ", name=" + name + ", password=" + password + ", computations=" + computations + "]";
 	}
 
 }
