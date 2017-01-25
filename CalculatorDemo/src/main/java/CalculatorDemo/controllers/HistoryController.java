@@ -1,5 +1,6 @@
 package CalculatorDemo.controllers;
 
+import java.util.HashSet;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +37,12 @@ public class HistoryController {
 
 	@RequestMapping(value = "/user", method = RequestMethod.POST)
 	public void addUser(@RequestBody UserEntry user) {
+		UserEntry userToAdd = new UserEntry(user.getName(), user.getPassword());
+		userToAdd.setComputations(new HashSet<>());
+		for (ComputationEntry computation : user.getComputations()) {
+			ComputationEntry computationToAdd = new ComputationEntry(computation.getExpression(), computation.getResult(), userToAdd);
+			userToAdd.getComputations().add(computationToAdd);
+		}
 		userDAO.saveUser(user);
 	}
 
