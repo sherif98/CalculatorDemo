@@ -12,14 +12,14 @@ public class CalculatorDemoFrontEndApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(CalculatorDemoFrontEndApplication.class, args);
-		RestTemplate restTemplate = new RestTemplate();
-		User user = restTemplate.getForObject("http://localhost:8080/history/user/Tarek", User.class);
-		System.out.println(user);
-		Computation computation = new Computation();
-		computation.setExpression("4 + 5");
-		computation.setResult("9");
-		user.getComputations().add(computation);
-		System.out.println(user.getComputations());
-		restTemplate.postForObject("http://localhost:8080/history/user/", user, User.class);
+//		RestTemplate restTemplate = new RestTemplate();
+//		User user = restTemplate.getForObject("http://localhost:8080/history/user/Tarek", User.class);
+//		System.out.println(user);
+//		Computation computation = new Computation();
+//		computation.setExpression("4 + 5");
+//		computation.setResult("9");
+//		user.getComputations().add(computation);
+//		System.out.println(user.getComputations());
+//		restTemplate.postForObject("http://localhost:8080/history/user/", user, User.class);
 	}
 }
