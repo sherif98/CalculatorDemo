@@ -31,7 +31,6 @@ public class HistoryController {
 			throw new UserNotFoundException();
 		}
 		return user.get(0);
-
 	}
 
 	@RequestMapping(value = "/user", method = RequestMethod.POST)
