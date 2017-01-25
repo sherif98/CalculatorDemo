@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import CalculatorDemo.controllers.exceptions.UserNotFoundException;
 import CalculatorDemo.dao.api.UserDAO;
+import CalculatorDemo.dao.entities.ComputationEntry;
 import CalculatorDemo.dao.entities.UserEntry;
 
 @RestController
@@ -36,6 +37,15 @@ public class HistoryController {
 	@RequestMapping(value = "/user", method = RequestMethod.POST)
 	public void addUser(@RequestBody UserEntry user) {
 		userDAO.saveUser(user);
+	}
+
+	@RequestMapping(value = "/update/{id}", method = RequestMethod.PUT)
+	public UserEntry update(@PathVariable("id") long id, @RequestBody ComputationEntry computation) {
+		UserEntry userToUpdate = userDAO.findUser(id);
+		ComputationEntry computationToAdd = new ComputationEntry(computation.getExpression(), computation.getResult(),
+				userToUpdate);
+		userToUpdate.getComputations().add(computationToAdd);
+		return userDAO.saveUser(userToUpdate);
 	}
 
 	@ExceptionHandler(UserNotFoundException.class)

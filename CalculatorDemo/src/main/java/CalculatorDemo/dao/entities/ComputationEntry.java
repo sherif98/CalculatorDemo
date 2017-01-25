@@ -18,15 +18,14 @@ public class ComputationEntry {
 	private UserEntry userEntry;
 
 	public ComputationEntry() {
-
 	}
 
 	public ComputationEntry(String name) {
 		this.expression = name;
 	}
 
-	public ComputationEntry(String name, String result, UserEntry userEntry) {
-		this.expression = name;
+	public ComputationEntry(String expression, String result, UserEntry userEntry) {
+		this.expression = expression;
 		this.result = result;
 		this.userEntry = userEntry;
 	}

@@ -19,7 +19,7 @@ public interface UserDAO {
 	 * @param user
 	 *            user entity to save in the DB
 	 */
-	public void saveUser(UserEntry user);
+	public UserEntry saveUser(UserEntry user);
 
 	/**
 	 * Saves variables number of users to the DB

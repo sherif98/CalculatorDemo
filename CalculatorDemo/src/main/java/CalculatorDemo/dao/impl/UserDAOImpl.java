@@ -21,8 +21,8 @@ public class UserDAOImpl implements UserDAO {
 	}
 
 	@Override
-	public void saveUser(UserEntry user) {
-		repo.saveAndFlush(user);
+	public UserEntry saveUser(UserEntry user) {
+		return repo.saveAndFlush(user);
 	}
 
 	@Override
