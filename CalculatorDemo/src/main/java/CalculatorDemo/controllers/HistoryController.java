@@ -5,6 +5,7 @@ import java.util.List;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -12,13 +13,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import CalculatorDemo.controllers.dto.Computation;
 import CalculatorDemo.controllers.dto.UserLoginRegisterationInfo;
 import CalculatorDemo.controllers.exceptions.ComputationNotFoundException;
+import CalculatorDemo.controllers.exceptions.ErrorMessage;
 import CalculatorDemo.controllers.exceptions.InvalidDataException;
-import CalculatorDemo.controllers.exceptions.UserExistsException;
+import CalculatorDemo.controllers.exceptions.UserAlreadyExistsException;
 import CalculatorDemo.controllers.exceptions.UserNotFoundException;
 import CalculatorDemo.dao.api.ComputationRepository;
 import CalculatorDemo.dao.api.UserDAO;
@@ -50,19 +53,10 @@ public class HistoryController {
 	public UserEntry getUserById(@PathVariable long id) {
 		UserEntry user = getUser(id);
 		if (user == null) {
-			throw new UserNotFoundException();
+			throw new UserNotFoundException(id);
 		}
 		return user;
 	}
-
-	// @RequestMapping(value = "/user/{name}", method = RequestMethod.GET)
-	// public UserEntry getUserByName(@PathVariable("name") String userName) {
-	// UserEntry user = getUser(userName);
-	// if (user == null) {
-	// throw new UserNotFoundException();
-	// }
-	// return user;
-	// }
 
 	@RequestMapping(value = "/user/{id}/computations", method = RequestMethod.GET)
 	public List<ComputationEntry> getAllUserComputations(@PathVariable long id,
@@ -70,7 +64,7 @@ public class HistoryController {
 		System.out.println(max);
 		UserEntry user = getUser(id);
 		if (user == null) {
-			throw new UserNotFoundException();
+			throw new UserNotFoundException(id);
 		}
 		List<ComputationEntry> computations = user.getComputations();
 		if (max != null) {
@@ -80,76 +74,45 @@ public class HistoryController {
 		return computations;
 	}
 
-	// @RequestMapping(value = "/user/{id}/computations", method =
-	// RequestMethod.GET)
-	// public List<ComputationEntry> getKUserComputations(@PathVariable long id,
-	// @RequestParam("max") long max) {
-	// UserEntry user = getUser(id);
-	// List<ComputationEntry> computations = user.getComputations();
-	// int numOfComputations = (int) Long.min(max, computations.size());
-	// System.out.println(numOfComputations);
-	// return computations.subList(0, numOfComputations - 1);
-	// }
-
+	// TODO
+	// request crashes (Internal Server Error)
 	@RequestMapping(value = "/user/{userId}/computations/{computationId}", method = RequestMethod.GET)
 	public ComputationEntry getUserComputationById(@PathVariable long userId, @PathVariable long computationId) {
 		try {
 			ComputationEntry computation = computationRepo.getOne(computationId);
 			return computation;
 		} catch (Exception e) {
-			throw new ComputationNotFoundException();
+			throw new ComputationNotFoundException(computationId);
 		}
 	}
 
 	@RequestMapping(value = "/user", method = RequestMethod.POST)
-	public void addUser(@RequestBody @Valid UserLoginRegisterationInfo newUser, Errors errors) {
+	@ResponseStatus(HttpStatus.CREATED)
+	public UserEntry addUser(@RequestBody @Valid UserLoginRegisterationInfo newUser, Errors errors) {
 		if (errors.hasErrors()) {
-			throw new InvalidDataException();
+			throw new InvalidDataException(errors.getAllErrors());
 		}
 		if (userExists(newUser)) {
-			throw new UserExistsException();
+			throw new UserAlreadyExistsException(newUser.getName());
 		}
-		saveNewUser(newUser);
+		UserEntry user = new UserEntry(newUser);
+		userDAO.saveUser(user);
+		return user;
 	}
 
-	// @RequestMapping(value = "/user", method = RequestMethod.POST)
-	// public void addUser(@RequestBody UserEntry user) {
-	// UserEntry userToAdd = new UserEntry(user.getName(), user.getPassword());
-	// userToAdd.setComputations(new HashSet<>());
-	// for (ComputationEntry computation : user.getComputations()) {
-	// ComputationEntry computationToAdd = new
-	// ComputationEntry(computation.getExpression(),
-	// computation.getResult(), userToAdd);
-	// userToAdd.getComputations().add(computationToAdd);
-	// }
-	// userDAO.saveUser(user);
-	// }
-
 	@RequestMapping(value = "user/{id}/computations/", method = RequestMethod.POST)
-	public void addComputation(@PathVariable long id, @RequestBody Computation computation) {
+	@ResponseStatus(HttpStatus.CREATED)
+	public ComputationEntry addComputation(@PathVariable long id, @RequestBody Computation computation) {
 		UserEntry userToUpdate = getUser(id);
 		if (userToUpdate == null) {
-			throw new UserNotFoundException();
+			throw new UserNotFoundException(id);
 		}
 		ComputationEntry computationToAdd = new ComputationEntry(computation, userToUpdate);
 		userToUpdate.getComputations().add(computationToAdd);
 		userDAO.saveUser(userToUpdate);
-	}
-
-	// @RequestMapping(value = "/update/{id}", method = RequestMethod.PUT)
-	// public UserEntry update(@PathVariable("id") long id, @RequestBody
-	// ComputationEntry computation) {
-	// UserEntry userToUpdate = userDAO.findUser(id);
-	// ComputationEntry computationToAdd = new
-	// ComputationEntry(computation.getExpression(), computation.getResult(),
-	// userToUpdate);
-	// userToUpdate.getComputations().add(computationToAdd);
-	// return userDAO.saveUser(userToUpdate);
-	// }
-
-	private void saveNewUser(UserLoginRegisterationInfo newUser) {
-		UserEntry user = new UserEntry(newUser);
-		userDAO.saveUser(user);
+		// TODO
+		// returning the computationToAdd object always have id 0
+		return computationToAdd;
 	}
 
 	private UserEntry getUser(long id) {
@@ -171,7 +134,27 @@ public class HistoryController {
 	}
 
 	@ExceptionHandler(UserNotFoundException.class)
-	public String userNotFoundHandler() {
-		return "user not found";
+	@ResponseStatus(HttpStatus.NOT_FOUND)
+	public ErrorMessage userNotFound(UserNotFoundException exc) {
+		return new ErrorMessage(HttpStatus.NOT_FOUND, "User [ " + exc.getUserId() + " ] not found");
 	}
+
+	@ExceptionHandler(InvalidDataException.class)
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	public ErrorMessage invalidCredentials(InvalidDataException exc) {
+		return new ErrorMessage(HttpStatus.BAD_REQUEST, exc.getMessage());
+	}
+
+	@ExceptionHandler(ComputationNotFoundException.class)
+	@ResponseStatus(HttpStatus.NOT_FOUND)
+	public ErrorMessage computationNotFound(ComputationNotFoundException exc) {
+		return new ErrorMessage(HttpStatus.NOT_FOUND, "User [ " + exc.getComputationId() + " ] not found");
+	}
+
+	@ExceptionHandler(UserAlreadyExistsException.class)
+	@ResponseStatus(HttpStatus.CONFLICT)
+	public ErrorMessage duplicateUser(UserAlreadyExistsException exc) {
+		return new ErrorMessage(HttpStatus.CONFLICT, "User [ " + exc.getUserName() + " ] already exists");
+	}
+
 }

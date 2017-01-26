@@ -1,9 +1,24 @@
 package CalculatorDemo.controllers.exceptions;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import java.util.List;
 
-//@ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "User Not Found")
+import org.springframework.validation.ObjectError;
+
 public class InvalidDataException extends RuntimeException {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private StringBuilder message;
+
+	public InvalidDataException(List<ObjectError> allErrors) {
+		message = new StringBuilder();
+		allErrors.stream().forEach(e -> message.append(e.getDefaultMessage()));
+	}
+
+	public String getMessage() {
+		return message.toString();
+	}
 
 }
